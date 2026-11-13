@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+title: "SCIP: catálogo interactivo de patrones de diseño GoF"
+message: "Si utiliza estos datos o documentos, cite este repositorio."
+type: software
+authors:
+  - family-names: Barberán
+    given-names: Carlos
+  - family-names: Robles
+    given-names: Josué
+  - family-names: Riofrío
+    given-names: Mateo
+  - family-names: González
+    given-names: Damián
+year: 2026
+version: 1.0.0
+license: MIT
+repository-code: "https://github.com/carlitoxbp/scip-patrones"
+keywords:
+  - patrones de diseño
+  - GoF
+  - arquitectura de software
+  - ISO/IEC 25023
+  - ISO/IEC/IEEE 42010
+  - mantenibilidad

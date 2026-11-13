@@ -1,0 +1,13 @@
+{
+  "name": "scip-patrones",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Datos, scripts y documentación del SCIP: catálogo interactivo de patrones de diseño GoF (ULEAM)",
+  "type": "module",
+  "scripts": {
+    "analyze": "node scripts/analisis.mjs",
+    "test": "node scripts/analisis.mjs"
+  },
+  "author": "Carlos Barberán, Josué Robles, Mateo Riofrío, Damián González",
+  "license": "MIT"
+}

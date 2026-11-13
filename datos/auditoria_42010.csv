@@ -1,0 +1,25 @@
+item,dimension,criterio,resultado,evidencia
+A-01,D1,Se identifican los stakeholders del sistema y sus intereses,Cumple,docs/adr/ADR-01.md
+A-02,D1,Cada stakeholder tiene al menos un concern documentado,Cumple,seccion 2 de la Fase 2
+A-03,D1,Los concerns se priorizan segun su impacto en la calidad,Cumple,docs/concerns.md
+A-04,D1,Se distingue entre concerns funcionales y de calidad,Cumple,docs/concerns.md
+A-05,D1,Se registra la fuente de cada concern,Cumple,docs/concerns.md
+A-06,D1,Los concerns se vinculan con las vistas que los atienden,Cumple,tabla 2 de la Fase 2
+A-07,D2,Cada vista declara el viewpoint que la rige,Parcial,la vista de datos no declara viewpoint
+A-08,D2,Las vistas cubren los concerns identificados,Cumple,figuras 2 a 5 de la Fase 2
+A-09,D2,La notacion de cada vista esta definida,Cumple,docs/vistas.md
+A-10,D2,Se documentan los elementos y relaciones de cada vista,Cumple,figuras 2 a 5
+A-11,D2,Se describe el contexto de uso de cada vista,Cumple,seccion 2 de la Fase 2
+A-12,D2,Existe correspondencia explicita entre vistas,Parcial,tabla sin identificadores cruzados
+A-13,D3,Cada decision relevante tiene justificacion,Cumple,docs/adr/ADR-01 a ADR-05
+A-14,D3,El rationale cita los concerns que atiende,Parcial,ADR-02 no vincula el concern de rendimiento
+A-15,D3,Se documentan alternativas descartadas,Cumple,docs/adr/ADR-01 a ADR-05
+A-16,D3,Las consecuencias de cada decision estan explicitadas,Cumple,docs/adr/ADR-01 a ADR-05
+A-17,D3,La arquitectura se alinea con los objetivos de calidad,Cumple,seccion 4 de la Fase 2
+A-18,D3,Se identifican riesgos y deuda tecnica,Cumple,docs/riesgos.md
+A-19,D4,Los ADR usan una plantilla uniforme,Cumple,docs/adr/plantilla.md
+A-20,D4,Los ADR tienen identificador y estado,Cumple,docs/adr/ADR-01 a ADR-05
+A-21,D4,Los ADR se versionan junto al codigo,Cumple,.github/workflows/ci.yml
+A-22,D4,Los ADR registran fecha y responsable de revision,Parcial,ADR-05 sin fecha ni responsable
+A-23,D4,Es posible rastrear codigo a decision,Cumple,tabla 4 de la Fase 2
+A-24,D4,Se revisan los ADR en cada hito,Cumple,acta de revision 20-oct-2026
