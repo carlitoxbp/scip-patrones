@@ -13,6 +13,7 @@ Esta guía indica, en orden, qué revisar y dónde está cada evidencia.
 | 1 | Mapa mental de los 22 patrones GoF | [`docs/fases/Mapa_Mental_Patrones_GoF.pdf`](fases/Mapa_Mental_Patrones_GoF.pdf) | 2 |
 | 2 | Diseño metodológico y arquitectura del SCIP | [`docs/fases/Fase2_Diseno_Metodologico_Patrones_GoF.pdf`](fases/Fase2_Diseno_Metodologico_Patrones_GoF.pdf) | 6 |
 | 3 | Implementación, CI/CD, métricas y datos | [`docs/fases/Fase3_Implementacion_y_Datos_Patrones_GoF.pdf`](fases/Fase3_Implementacion_y_Datos_Patrones_GoF.pdf) | 6 |
+| 4 | Análisis de resultados, hallazgos y discusión | [`docs/fases/Fase4_Analisis_y_Discusion_Patrones_GoF.pdf`](fases/Fase4_Analisis_y_Discusion_Patrones_GoF.pdf) | 8 |
 | 5 | Manuscrito científico (IMRyD, APA 7) | [`docs/fases/Fase5_Manuscrito_Cientifico_Patrones_GoF.pdf`](fases/Fase5_Manuscrito_Cientifico_Patrones_GoF.pdf) | 8 |
 
 La versión navegable del mapa mental de la fase 1 está en

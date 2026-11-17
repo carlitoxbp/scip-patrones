@@ -13,7 +13,8 @@ Sistema de Catálogo Interactivo de Patrones. Publica los 22 patrones de diseño
 catálogo GoF con intención, analogía cotidiana, caso de uso técnico, filtros por
 categoría, búsqueda incremental y un mapa jerárquico navegable. El diseño se
 documenta en las fases 1 y 2; la prueba de concepto, el pipeline de calidad y la
-recolección de datos, en la fase 3; la síntesis científica, en la fase 5.
+recolección de datos, en la fase 3; el análisis de resultados y la discusión, en la fase 4;
+y la síntesis científica, en la fase 5.
 
 ## Resultados principales
 
@@ -44,7 +45,7 @@ scip-patrones/
 │  ├─ ENTREGA.md          guía de revisión de la entrega
 │  ├─ mapa-interactivo.html  mapa mental navegable de la fase 1
 │  ├─ adr/                ADR-01 a ADR-05 (decisiones de arquitectura)
-│  └─ fases/              entregables en PDF de las fases 1, 2, 3 y 5
+│  └─ fases/              entregables en PDF de las fases 1, 2, 3, 4 y 5
 ├─ package.json
 ├─ LICENSE                código y scripts (MIT)
 └─ LICENSE-DATA           datos (CC BY 4.0)
@@ -86,6 +87,7 @@ con ese comando.
 | 1 | `docs/fases/Mapa_Mental_Patrones_GoF.pdf` |
 | 2 | `docs/fases/Fase2_Diseno_Metodologico_Patrones_GoF.pdf` |
 | 3 | `docs/fases/Fase3_Implementacion_y_Datos_Patrones_GoF.pdf` |
+| 4 | `docs/fases/Fase4_Analisis_y_Discusion_Patrones_GoF.pdf` |
 | 5 | `docs/fases/Fase5_Manuscrito_Cientifico_Patrones_GoF.pdf` |
 
 El orden sugerido de lectura, con el mapa de cada evidencia, está en
