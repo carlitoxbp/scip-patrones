@@ -41,6 +41,8 @@ scip-patrones/
 ├─ scripts/
 │  └─ analisis.mjs        recalcula métricas, alfa y cumplimiento
 ├─ docs/
+│  ├─ ENTREGA.md          guía de revisión de la entrega
+│  ├─ mapa-interactivo.html  mapa mental navegable de la fase 1
 │  ├─ adr/                ADR-01 a ADR-05 (decisiones de arquitectura)
 │  └─ fases/              entregables en PDF de las fases 1, 2, 3 y 5
 ├─ package.json
@@ -85,6 +87,10 @@ con ese comando.
 | 2 | `docs/fases/Fase2_Diseno_Metodologico_Patrones_GoF.pdf` |
 | 3 | `docs/fases/Fase3_Implementacion_y_Datos_Patrones_GoF.pdf` |
 | 5 | `docs/fases/Fase5_Manuscrito_Cientifico_Patrones_GoF.pdf` |
+
+El orden sugerido de lectura, con el mapa de cada evidencia, está en
+[`docs/ENTREGA.md`](docs/ENTREGA.md). La fase 1 tiene además una versión
+navegable en [`docs/mapa-interactivo.html`](docs/mapa-interactivo.html).
 
 ## Licencias
 

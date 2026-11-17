@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mapa Mental Interactivo · Patrones de Diseño GoF</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#F4F7FB;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-family:"Segoe UI","Inter",system-ui,-apple-system,Arial,sans-serif;color:#0F172A}
+  .poster{position:relative;width:2245px;height:1587px;background:
+      radial-gradient(1200px 600px at 8% 0%, #E8F0FF 0%, transparent 60%),
+      radial-gradient(900px 600px at 100% 8%, #FFF1E6 0%, transparent 55%),
+      linear-gradient(180deg,#FBFCFE 0%,#F4F7FB 100%);
+    overflow:hidden}
+  .glow{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;pointer-events:none}
+  .g1{width:520px;height:520px;left:-160px;top:-220px;background:#BFDBFE}
+  .g2{width:460px;height:460px;right:-120px;top:-200px;background:#FED7AA}
+  .g3{width:460px;height:460px;left:44%;bottom:-280px;background:#CCFBF1;opacity:.4}
+
+  .hub{position:absolute;left:812.5px;top:26px;width:620px;height:120px;border-radius:22px;
+    background:linear-gradient(135deg,#0B1220 0%,#15233B 60%,#1E293B 100%);
+    color:#fff;padding:16px 26px 14px;box-shadow:0 18px 40px rgba(15,23,42,.28);z-index:5}
+  .hub-kicker{font-size:10.5px;letter-spacing:2.4px;color:#93A4BF;font-weight:600}
+  .hub h1{font-size:30px;line-height:1.06;letter-spacing:-.4px;font-weight:800;margin-top:3px}
+  .hub p{font-size:11.5px;color:#C7D2E4;margin-top:5px;line-height:1.3;max-width:520px}
+  .hub .dot{position:absolute;bottom:16px;right:26px;width:11px;height:11px;border-radius:50%;margin-left:6px}
+  .hub .dot:nth-of-type(2){right:42px}
+  .hub .dot:nth-of-type(3){right:58px}
+
+  .fan{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+  .fan path{fill:none;stroke-width:2.6;opacity:.55;stroke-linecap:round}
+
+  .heads{position:absolute;left:0;top:190px;width:100%;height:82px}
+  .head{position:absolute;top:0;height:82px;border-radius:16px;background:var(--cb);
+    border-left:6px solid var(--c);padding:12px 16px 10px 18px;box-shadow:0 6px 16px rgba(15,23,42,.05);z-index:3}
+  .head::after{content:"";position:absolute;right:14px;bottom:12px;width:38px;height:6px;border-radius:6px;background:var(--c);opacity:.18}
+  .head-top{display:flex;align-items:center;gap:8px}
+  .h-ico{font-size:17px;line-height:1}
+  .h-name{font-size:16.5px;font-weight:800;letter-spacing:.6px;color:var(--cd)}
+  .h-count{margin-left:auto;font-size:12px;font-weight:800;color:#fff;background:var(--c);
+    min-width:24px;height:24px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;padding:0 7px}
+  .head p{font-size:11.5px;color:#475569;margin-top:4px;line-height:1.25;font-weight:500}
+
+  .col{position:absolute;top:294px;height:1168px;padding-left:18px;display:flex;flex-direction:column;gap:13px;z-index:2}
+  .col::before{content:"";position:absolute;left:0;top:-10px;bottom:0;width:3px;border-radius:3px;background:var(--c);opacity:.4}
+
+  .card{position:relative;flex:1 1 0;min-height:0;background:#fff;border:1px solid #E4EBF5;border-radius:13px;
+    padding:16px 18px 16px 20px;display:flex;flex-direction:column;justify-content:space-between;gap:5px;
+    box-shadow:0 2px 6px rgba(15,23,42,.045)}
+  .card::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--c)}
+  .card::after{content:"";position:absolute;left:-18px;top:50%;width:18px;height:2px;background:var(--c);opacity:.45}
+  .card-head{display:flex;align-items:center;gap:9px;margin-bottom:3px}
+  .card-head .ico{width:28px;height:28px;border-radius:8px;background:var(--cb);display:inline-flex;align-items:center;justify-content:center;font-size:16px;flex:0 0 auto}
+  .card-head h3{font-size:14.2px;font-weight:800;letter-spacing:-.1px;color:#0F172A;line-height:1.1}
+  .num{margin-left:auto;font-size:10px;font-weight:700;color:#94A3B8;letter-spacing:.5px}
+  .f{font-size:13.1px;line-height:1.36;color:#3B4A5F;font-weight:450}
+  .f .k{display:block;font-size:9.8px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--cd);opacity:.9;margin-bottom:1px}
+  .tight .card{padding:8px 14px 8px 17px;gap:5px;justify-content:center}
+  .tight .card-head .ico{width:26px;height:26px;font-size:15px}
+  .tight .card-head h3{font-size:12.4px}
+  .tight .f{font-size:11.35px;line-height:1.3}
+  .tight .f .k{font-size:8.7px;margin-bottom:0}
+
+  .foot{position:absolute;left:60px;right:60px;bottom:20px;height:48px;display:flex;align-items:center;justify-content:space-between;
+    border-top:1px solid #DCE5F1;padding-top:10px;font-size:11px;color:#64748B;z-index:4}
+  .foot b{color:#0F172A;font-weight:700}
+  .legend b{font-size:12px}
+
+  .guide{position:absolute;left:60px;top:40px;width:330px;display:flex;flex-direction:column;gap:6px;z-index:4}
+  .g-title{font-size:9.5px;letter-spacing:2.2px;color:#64748B;font-weight:800;margin-bottom:2px}
+  .g-row{display:flex;align-items:center;gap:8px;font-size:11px;color:#64748B;font-weight:500}
+  .g-row b{width:17px;height:17px;border-radius:50%;background:#E2E8F0;color:#334155;font-size:9.5px;font-weight:800;
+    display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .source{position:absolute;right:60px;top:44px;text-align:right;font-size:9.5px;letter-spacing:2px;color:#94A3B8;font-weight:800;z-index:4}
+  .source span{display:block;letter-spacing:0;text-transform:none;font-size:10.5px;color:#64748B;font-weight:500;margin-top:3px}
+
+  @page{size:594mm 420mm;margin:0}
+  @media print{html,body{background:#fff}.poster{box-shadow:none}}
+
+  html,body{height:100%;overflow:hidden;background:#0B1220}
+  #stage{position:fixed;inset:64px 0 0 0;overflow:hidden;cursor:grab;background:
+    radial-gradient(800px 500px at 50% 0%,#16233a 0%,transparent 70%),#0B1220}
+  #stage.drag{cursor:grabbing}
+  #canvas{position:absolute;left:0;top:0;transform-origin:0 0;box-shadow:0 30px 80px rgba(0,0,0,.55);border-radius:8px}
+  .bar{position:fixed;left:0;right:0;top:0;height:64px;display:flex;align-items:center;gap:14px;padding:0 18px;
+    background:rgba(11,18,32,.94);border-bottom:1px solid #1E293B;color:#E2E8F0;z-index:20;backdrop-filter:blur(8px)}
+  .brand{display:flex;flex-direction:column;line-height:1.15;margin-right:6px}
+  .brand b{font-size:14px;letter-spacing:-.2px}
+  .brand span{font-size:10.5px;color:#8FA3BF;letter-spacing:.6px;text-transform:uppercase}
+  .search{position:relative;flex:0 0 300px}
+  .search input{width:100%;height:38px;border-radius:10px;border:1px solid #253248;background:#111c2e;color:#E2E8F0;
+    padding:0 12px 0 36px;font-size:13px;outline:none;font-family:inherit}
+  .search input:focus{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.18)}
+  .search .lupa{position:absolute;left:12px;top:9px;font-size:15px;opacity:.7}
+  .chips{display:flex;gap:8px;margin-left:auto}
+  .chip{border:1px solid #253248;background:#111c2e;color:#CBD5E1;border-radius:999px;padding:7px 13px;font-size:12px;
+    cursor:pointer;display:inline-flex;align-items:center;gap:7px;font-family:inherit;transition:.15s}
+  .chip:hover{border-color:#3B4A63;background:#16233a}
+  .chip.on{color:#fff;border-color:transparent}
+  .chip .pt{width:9px;height:9px;border-radius:50%}
+  .zoom{display:flex;align-items:center;gap:6px;margin-left:10px}
+  .btn{width:34px;height:34px;border-radius:9px;border:1px solid #253248;background:#111c2e;color:#E2E8F0;
+    font-size:16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-family:inherit}
+  .btn:hover{background:#182642}
+  .btn.txt{width:auto;padding:0 12px;font-size:12px}
+  .pct{font-size:12px;color:#94A3B8;width:44px;text-align:center;font-variant-numeric:tabular-nums}
+  .hint{position:fixed;left:18px;bottom:14px;font-size:11.5px;color:#7C8DA6;background:rgba(11,18,32,.85);
+    border:1px solid #1E293B;border-radius:9px;padding:8px 12px;z-index:20}
+  .hint b{color:#CBD5E1}
+  #poster.hay .card{opacity:.22;filter:saturate(.4);transition:opacity .18s}
+  #poster.hay .card.hit{opacity:1;filter:none;box-shadow:0 0 0 3px #F59E0B,0 10px 24px rgba(0,0,0,.18)}
+  @media (max-width:1000px){.search{flex-basis:180px}.brand span{display:none}.chips{display:none}}
+</style></head>
+<body>
+  <div class="bar">
+    <div class="brand"><b>Patrones de Diseño (GoF)</b><span>Mapa mental interactivo · Refactoring.Guru</span></div>
+    <label class="search"><span class="lupa">🔍</span><input id="q" type="search" placeholder="Buscar patrón: strategy, proxy, observer…" autocomplete="off"></label>
+    <div class="chips">
+      <button class="chip" data-cat="creacional" style="--c:#1D4ED8"><span class="pt" style="background:#1D4ED8"></span>Creacionales · 5</button>
+      <button class="chip" data-cat="estructural" style="--c:#0F766E"><span class="pt" style="background:#0F766E"></span>Estructurales · 7</button>
+      <button class="chip" data-cat="comportamiento" style="--c:#C2410C"><span class="pt" style="background:#C2410C"></span>Comportamiento · 10</button>
+    </div>
+    <div class="zoom">
+      <button class="btn" id="out" title="Alejar">−</button>
+      <span class="pct" id="pct">100%</span>
+      <button class="btn" id="in" title="Acercar">+</button>
+      <button class="btn txt" id="fit" title="Ajustar a pantalla">Ajustar</button>
+    </div>
+  </div>
+  <div id="stage"><div id="canvas">
+  <div class="poster" id="poster">
+    <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
+
+    <svg class="fan" viewBox="0 0 2245 1587" aria-hidden="true">
+      <path d="M1122.5 146 C1122.5 178, 314.4 160, 314.4 190" stroke="#1D4ED8" />
+      <path d="M1122.5 146 C1122.5 178, 853.1 160, 853.1 190" stroke="#0F766E" />
+      <path d="M1122.5 146 C1122.5 178, 1661.1 160, 1661.1 190" stroke="#C2410C" />
+      <circle cx="314.4" cy="186" r="4.5" fill="#1D4ED8" />
+      <circle cx="853.1" cy="186" r="4.5" fill="#0F766E" />
+      <circle cx="1661.1" cy="186" r="4.5" fill="#C2410C" />
+    </svg>
+
+    <header class="hub">
+      <div class="hub-kicker">CATÁLOGO GOF · 22 PATRONES</div>
+      <h1>Patrones de Diseño</h1>
+      <p>Soluciones reutilizables a problemas recurrentes del diseño orientado a objetos</p>
+      <span class="dot" style="background:#1D4ED8"></span>
+      <span class="dot" style="background:#0F766E"></span>
+      <span class="dot" style="background:#C2410C"></span>
+    </header>
+
+    <div class="heads">
+      <div class="head" style="left:60px;width:508.75px;--c:#1D4ED8;--cd:#1E3A8A;--cb:#EFF6FF">
+        <div class="head-top"><span class="h-ico">🏗️</span><span class="h-name">CREACIONALES</span><span class="h-count">5</span></div>
+        <p>Cómo crear objetos de forma flexible</p>
+      </div>
+      <div class="head" style="left:598.75px;width:508.75px;--c:#0F766E;--cd:#134E4A;--cb:#ECFDF5">
+        <div class="head-top"><span class="h-ico">🧱</span><span class="h-name">ESTRUCTURALES</span><span class="h-count">7</span></div>
+        <p>Cómo ensamblar objetos en estructuras mayores</p>
+      </div>
+      <div class="head wide" style="left:1137.5px;width:1047.5px;--c:#C2410C;--cd:#7C2D12;--cb:#FFF7ED">
+        <div class="head-top"><span class="h-ico">🔄</span><span class="h-name">COMPORTAMIENTO</span><span class="h-count">10</span></div>
+        <p>Cómo repartir responsabilidades y comunicación · distribución en dos columnas</p>
+      </div>
+    </div>
+
+    
+    <div class="col " style="left:60px;width:508.75px;--c:#1D4ED8;--cb:#EFF6FF">
+      
+      <article class="card" style="--c:#1D4ED8;--cd:#1E3A8A;--cb:#DBEAFE" data-name="factory method" data-cat="creacional">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🏭</span>
+          <h3>Factory Method</h3>
+          <span class="num">01</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Delega en las subclases la decisión de qué clase concreta instanciar.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>Fábrica de camiones que añade una línea de barcos sin demoler la planta.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Un módulo de logística que crea EnvíoTerrestre o EnvíoMarítimo según la ruta.</p>
+      </article>
+      <article class="card" style="--c:#1D4ED8;--cd:#1E3A8A;--cb:#DBEAFE" data-name="abstract factory" data-cat="creacional">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🧩</span>
+          <h3>Abstract Factory</h3>
+          <span class="num">02</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Crea familias de objetos relacionados sin acoplarse a sus clases concretas.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>Tienda de muebles con líneas completas: eliges la familia y todo combina.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Intercambiar kits de UI (claro/oscuro) o SDKs de nube (AWS/GCP) de forma coherente.</p>
+      </article>
+      <article class="card" style="--c:#1D4ED8;--cd:#1E3A8A;--cb:#DBEAFE" data-name="builder" data-cat="creacional">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🏗️</span>
+          <h3>Builder</h3>
+          <span class="num">03</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Construye un objeto complejo paso a paso y permite distintas representaciones.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>Cadena de montaje de autos: mismo proceso, distinto motor y acabados.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Armar consultas SQL o clientes HTTP con decenas de parámetros opcionales.</p>
+      </article>
+      <article class="card" style="--c:#1D4ED8;--cd:#1E3A8A;--cb:#DBEAFE" data-name="prototype" data-cat="creacional">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🧬</span>
+          <h3>Prototype</h3>
+          <span class="num">04</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Copia objetos existentes sin que el código dependa de sus clases.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>División celular: la célula original genera una copia idéntica.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Clonar plantillas de documentos o enemigos preconfigurados en un videojuego.</p>
+      </article>
+      <article class="card" style="--c:#1D4ED8;--cd:#1E3A8A;--cb:#DBEAFE" data-name="singleton" data-cat="creacional">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🔒</span>
+          <h3>Singleton</h3>
+          <span class="num">05</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Asegura una única instancia de la clase y un punto de acceso global a ella.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>Un país tiene un solo gobierno oficial, sin importar quién lo dirija.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Pool de conexiones o configuración global compartida por todos los módulos.</p>
+      </article>
+    </div>
+    <div class="col tight" style="left:598.75px;width:508.75px;--c:#0F766E;--cb:#ECFDF5">
+      
+      <article class="card" style="--c:#0F766E;--cd:#134E4A;--cb:#CCFBF1" data-name="adapter" data-cat="estructural">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🔌</span>
+          <h3>Adapter</h3>
+          <span class="num">06</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Hace colaborar objetos con interfaces incompatibles mediante un envoltorio.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>Adaptador de enchufe europeo a americano al viajar.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Integrar la API de un proveedor legado bajo la interfaz IPasarelaPago propia.</p>
+      </article>
+      <article class="card" style="--c:#0F766E;--cd:#134E4A;--cb:#CCFBF1" data-name="bridge" data-cat="estructural">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🌉</span>
+          <h3>Bridge</h3>
+          <span class="num">07</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Separa abstracción e implementación para que evolucionen por separado.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>El control remoto funciona con TV o radio sin depender de la marca.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Reportes (PDF/Excel/HTML) combinables con cualquier fuente de datos.</p>
+      </article>
+      <article class="card" style="--c:#0F766E;--cd:#134E4A;--cb:#CCFBF1" data-name="composite" data-cat="estructural">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🌳</span>
+          <h3>Composite</h3>
+          <span class="num">08</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Organiza objetos en árboles y los trata igual que a un elemento individual.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>Ejército → divisiones → brigadas: una orden baja por toda la jerarquía.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Árbol de carpetas o de componentes UI: operar en un nodo afecta a su subárbol.</p>
+      </article>
+      <article class="card" style="--c:#0F766E;--cd:#134E4A;--cb:#CCFBF1" data-name="decorator" data-cat="estructural">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🧥</span>
+          <h3>Decorator</h3>
+          <span class="num">09</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Añade comportamiento a un objeto envolviéndolo, sin modificar su clase.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>Vestirse por capas: suéter, chaqueta e impermeable que se suman y se quitan.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Encadenar compresión + cifrado + logs sobre un mismo flujo de datos.</p>
+      </article>
+      <article class="card" style="--c:#0F766E;--cd:#134E4A;--cb:#CCFBF1" data-name="facade" data-cat="estructural">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🏛️</span>
+          <h3>Facade</h3>
+          <span class="num">10</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Expone una interfaz simple que oculta la complejidad de un subsistema.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>El operador telefónico gestiona pedido, pago y envío por ti.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Un servicio procesarCompra() que orquesta inventario, pago y facturación.</p>
+      </article>
+      <article class="card" style="--c:#0F766E;--cd:#134E4A;--cb:#CCFBF1" data-name="flyweight" data-cat="estructural">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🪶</span>
+          <h3>Flyweight</h3>
+          <span class="num">11</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Comparte el estado común entre muchos objetos para ahorrar memoria.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>Miles de árboles comparten especie y textura; solo cambian posición y tamaño.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Renderizar 100.000 partículas o glifos reutilizando texturas en caché.</p>
+      </article>
+      <article class="card" style="--c:#0F766E;--cd:#134E4A;--cb:#CCFBF1" data-name="proxy" data-cat="estructural">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🛡️</span>
+          <h3>Proxy</h3>
+          <span class="num">12</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Sustituye a otro objeto para controlar el acceso a él.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>La tarjeta de crédito representa a la cuenta bancaria al pagar.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Caché, permisos o carga diferida delante de un servicio remoto costoso.</p>
+      </article>
+    </div>
+    <div class="col " style="left:1137.5px;width:508.75px;--c:#C2410C;--cb:#FFF7ED">
+      
+      <article class="card" style="--c:#C2410C;--cd:#7C2D12;--cb:#FFEDD5" data-name="chain of responsibility" data-cat="comportamiento">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">⛓️</span>
+          <h3>Chain of Responsibility</h3>
+          <span class="num">13</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Pasa la petición por una cadena de manejadores hasta que alguien la resuelva.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>Soporte técnico: el caso escala hasta que un operador logra resolverlo.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Middleware HTTP (auth, validación, rate limit) o flujo de aprobación de gastos.</p>
+      </article>
+      <article class="card" style="--c:#C2410C;--cd:#7C2D12;--cb:#FFEDD5" data-name="command" data-cat="comportamiento">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🧾</span>
+          <h3>Command</h3>
+          <span class="num">14</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Convierte una petición en objeto para encolarla, parametrizarla o deshacerla.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>El pedido escrito del restaurante que el chef ejecuta cuando puede.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Deshacer/rehacer en editores, colas de tareas y macros.</p>
+      </article>
+      <article class="card" style="--c:#C2410C;--cd:#7C2D12;--cb:#FFEDD5" data-name="iterator" data-cat="comportamiento">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🔁</span>
+          <h3>Iterator</h3>
+          <span class="num">15</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Recorre una colección sin exponer cómo está almacenada.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>Recorrer Roma con guía, con una app o por tu cuenta: mismo destino, otro recorrido.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Iterar resultados paginados de una BD o un árbol con BFS/DFS tras una interfaz única.</p>
+      </article>
+      <article class="card" style="--c:#C2410C;--cd:#7C2D12;--cb:#FFEDD5" data-name="mediator" data-cat="comportamiento">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🗼</span>
+          <h3>Mediator</h3>
+          <span class="num">16</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Centraliza la comunicación entre objetos y reduce sus dependencias directas.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>Los pilotos no negocian entre sí: todo pasa por la torre de control.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Bus de eventos central o coordinador de widgets en un formulario complejo.</p>
+      </article>
+      <article class="card" style="--c:#C2410C;--cd:#7C2D12;--cb:#FFEDD5" data-name="memento" data-cat="comportamiento">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">💾</span>
+          <h3>Memento</h3>
+          <span class="num">17</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Guarda y restaura el estado de un objeto sin revelar sus detalles internos.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>Partida guardada: vuelves al mismo punto sin conocer los datos del juego.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Undo/redo de editores y snapshots antes de operaciones riesgosas.</p>
+      </article>
+    </div>
+    <div class="col " style="left:1676.25px;width:508.75px;--c:#C2410C;--cb:#FFF7ED">
+      
+      <article class="card" style="--c:#C2410C;--cd:#7C2D12;--cb:#FFEDD5" data-name="observer" data-cat="comportamiento">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">📡</span>
+          <h3>Observer</h3>
+          <span class="num">18</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Notifica a varios suscriptores cuando el objeto observado cambia.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>Suscripción a una revista: cada número llega a todos los suscriptores.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Eventos de UI, notificaciones push y stores reactivos que actualizan sus vistas.</p>
+      </article>
+      <article class="card" style="--c:#C2410C;--cd:#7C2D12;--cb:#FFEDD5" data-name="state" data-cat="comportamiento">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🚦</span>
+          <h3>State</h3>
+          <span class="num">19</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Cambia el comportamiento de un objeto cuando cambia su estado interno.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>El mismo botón del celular hace otra cosa si está bloqueado o sin batería.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Ciclo de vida de un pedido o de una conexión (Nuevo → Pagado → Enviado).</p>
+      </article>
+      <article class="card" style="--c:#C2410C;--cd:#7C2D12;--cb:#FFEDD5" data-name="strategy" data-cat="comportamiento">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">🧭</span>
+          <h3>Strategy</h3>
+          <span class="num">20</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Define algoritmos intercambiables y elige uno en tiempo de ejecución.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>Llegar al aeropuerto en bus, taxi o bicicleta según presupuesto y tiempo.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Elegir pasarela de pago (Stripe/PayPal) o algoritmo de compresión en runtime.</p>
+      </article>
+      <article class="card" style="--c:#C2410C;--cd:#7C2D12;--cb:#FFEDD5" data-name="template method" data-cat="comportamiento">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">📐</span>
+          <h3>Template Method</h3>
+          <span class="num">21</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Fija el esqueleto de un algoritmo y delega pasos concretos a las subclases.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>Plano de vivienda en serie: mismos pasos, detalles personalizables.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Importadores CSV/XML/JSON o tests con setup y teardown comunes.</p>
+      </article>
+      <article class="card" style="--c:#C2410C;--cd:#7C2D12;--cb:#FFEDD5" data-name="visitor" data-cat="comportamiento">
+        <div class="card-head">
+          <span class="ico" aria-hidden="true">👔</span>
+          <h3>Visitor</h3>
+          <span class="num">22</span>
+        </div>
+        <p class="f"><span class="k">🎯 Intención</span>Separa los algoritmos de la estructura de objetos sobre la que operan.</p>
+        <p class="f"><span class="k">🌍 Analogía</span>El agente de seguros ofrece una póliza distinta según el tipo de edificio.</p>
+        <p class="f"><span class="k">⚙️ Uso técnico</span>Exportar un AST a varios formatos o calcular métricas sin modificar los nodos.</p>
+      </article>
+    </div>
+
+    <aside class="guide">
+      <span class="g-title">CÓMO LEER EL MAPA</span>
+      <span class="g-row"><b>1</b> Rama: categoría del patrón</span>
+      <span class="g-row"><b>2</b> Nodo: patrón concreto</span>
+      <span class="g-row"><b>3</b> Detalle: intención · analogía · uso</span>
+    </aside>
+    <div class="source">FUENTE<span>refactoring.guru/es/design-patterns</span></div>
+
+    <footer class="foot">
+      <span><b>Elaborado por:</b> Carlos Barberán · Josué Robles · Mateo Riofrío · Damián González</span>
+      <span class="legend"><b>🎯</b> Intención · <b>🌍</b> Analogía · <b>⚙️</b> Uso técnico</span>
+      <span><b>ULEAM</b> · Arquitectura de Software · 24 de octubre de 2026</span>
+    </footer>
+  </div></div></div>
+  <div class="hint"><b>Arrastra</b> para mover · <b>Rueda</b> para zoom · <b>Doble clic</b> para restablecer</div>
+
+<script>
+(function(){
+  const stage = document.getElementById('stage');
+  const canvas = document.getElementById('canvas');
+  const poster = document.getElementById('poster');
+  const pct = document.getElementById('pct');
+  const q = document.getElementById('q');
+  let s = 0.4, tx = 0, ty = 0, min = 0.12, max = 2.2;
+
+  function apply(){ canvas.style.transform = `translate(${tx}px,${ty}px) scale(${s})`; pct.textContent = Math.round(s*100)+'%'; }
+  function fit(){
+    const W = stage.clientWidth, H = stage.clientHeight;
+    s = Math.min(W/2245, H/1587) * 0.97;
+    tx = (W - 2245*s)/2; ty = (H - 1587*s)/2; apply();
+  }
+  function zoomAt(ns, cx, cy){
+    ns = Math.max(min, Math.min(max, ns));
+    const k = ns/s;
+    tx = cx - (cx - tx)*k; ty = cy - (cy - ty)*k; s = ns; apply();
+  }
+  document.getElementById('in').onclick = () => { const r = stage.getBoundingClientRect(); zoomAt(s*1.2, r.width/2, r.height/2); };
+  document.getElementById('out').onclick = () => { const r = stage.getBoundingClientRect(); zoomAt(s/1.2, r.width/2, r.height/2); };
+  document.getElementById('fit').onclick = fit;
+
+  stage.addEventListener('wheel', e => { e.preventDefault(); const r = stage.getBoundingClientRect();
+    zoomAt(s * (e.deltaY < 0 ? 1.12 : 1/1.12), e.clientX - r.left, e.clientY - r.top); }, {passive:false});
+
+  let down = false, sx = 0, sy = 0;
+  stage.addEventListener('pointerdown', e => { if (e.target.closest('.bar')) return; down = true; sx = e.clientX - tx; sy = e.clientY - ty; stage.classList.add('drag'); stage.setPointerCapture(e.pointerId); });
+  stage.addEventListener('pointermove', e => { if(!down) return; tx = e.clientX - sx; ty = e.clientY - sy; apply(); });
+  stage.addEventListener('pointerup', () => { down = false; stage.classList.remove('drag'); });
+  stage.addEventListener('dblclick', fit);
+
+  const chips = [...document.querySelectorAll('.chip')];
+  let cat = null;
+  function paint(){
+    const t = q.value.trim().toLowerCase();
+    const cards = [...poster.querySelectorAll('.card')];
+    let hits = 0;
+    cards.forEach(c => {
+      const okText = !t || c.dataset.name.includes(t);
+      const okCat = !cat || c.dataset.cat === cat;
+      const hit = okText && okCat;
+      c.classList.toggle('hit', hit && (!!t || !!cat));
+      if (hit) hits++;
+    });
+    poster.classList.toggle('hay', !!t || !!cat);
+    chips.forEach(ch => { const on = ch.dataset.cat === cat;
+      ch.classList.toggle('on', on);
+      ch.style.background = on ? ch.dataset.cat === 'creacional' ? '#1D4ED8' : ch.dataset.cat === 'estructural' ? '#0F766E' : '#C2410C' : '';
+    });
+  }
+  q.addEventListener('input', paint);
+  chips.forEach(ch => ch.onclick = () => { cat = cat === ch.dataset.cat ? null : ch.dataset.cat; paint(); });
+
+  window.addEventListener('resize', fit);
+  fit();
+})();
+</script>
+</body></html>
